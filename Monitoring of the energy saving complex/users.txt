@@ -1,0 +1,7 @@
+admin1 1 all
+admin2 1 all
+user2 2 a,b,c
+user1 1 a,b
+user3 3 a,b,c
+user4 4 b,c,d
+user5 5 a,c,d
