@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'F:\project\ElectroProject962\UserWindow.ui'
+# Form implementation generated from reading ui file "UserWindow.ui"
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from os import listdir
-from datetime import *
+from PyQt5 import QtCore, QtWidgets
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+import csv
+import datetime as dat
+
+table2 = []
+
 
 class Ui_UserWindow(object):
     def setupUi(self, UserWindow):
@@ -211,9 +217,6 @@ class Ui_UserWindow(object):
         self.pushButton_3 = QtWidgets.QPushButton(UserWindow)
         self.pushButton_3.setGeometry(QtCore.QRect(30, 570, 171, 61))
         self.pushButton_3.setObjectName("pushButton_3")
-        self.graphicsView = QtWidgets.QGraphicsView(UserWindow)
-        self.graphicsView.setGeometry(QtCore.QRect(570, 330, 431, 321))
-        self.graphicsView.setObjectName("graphicsView")
         self.pushButton_4 = QtWidgets.QPushButton(UserWindow)
         self.pushButton_4.setGeometry(QtCore.QRect(260, 570, 171, 61))
         self.pushButton_4.setObjectName("pushButton_4")
@@ -273,20 +276,27 @@ class Ui_UserWindow(object):
         self.lineEdit_30 = QtWidgets.QLineEdit(UserWindow)
         self.lineEdit_30.setGeometry(QtCore.QRect(440, 310, 113, 20))
         self.lineEdit_30.setObjectName("lineEdit_30")
-        f = open("temp.txt").readline().split()
-        spisokstanciy = f[-1].split(',')
-        self.listWidget.addItems(spisokstanciy)
+        self.label_46 = QtWidgets.QLabel(UserWindow)
+        self.label_46.setGeometry(QtCore.QRect(710, 500, 231, 16))
+        self.label_46.setObjectName("label_46")
+
+        with open("tmp/temp.txt") as temp_file:
+            temp_content = temp_file.readline().split()
+            station_list = temp_content[-1].split(",")
+
+        self.listWidget.addItems(station_list)
 
         self.pushButton.clicked.connect(self.showyourdevise)
         self.pushButton_2.clicked.connect(self.seetelemetry)
         self.listWidget_3.itemClicked.connect(self.view)
         self.pushButton_4.clicked.connect(self.maketable)
+        self.pushButton_3.clicked.connect(self.seeGraph)
         self.retranslateUi(UserWindow)
         QtCore.QMetaObject.connectSlotsByName(UserWindow)
 
     def retranslateUi(self, UserWindow):
         _translate = QtCore.QCoreApplication.translate
-        UserWindow.setWindowTitle(_translate("UserWindow", "Form"))
+        UserWindow.setWindowTitle(_translate("UserWindow", "Form2"))
         self.pushButton.setText(_translate("UserWindow", "Загрузить данные"))
         self.label.setText(_translate("UserWindow", "Выбирете доступный вам комплекс:"))
         self.pushButton_2.setText(_translate("UserWindow", "Выгрузить данные телеметрии"))
@@ -338,92 +348,158 @@ class Ui_UserWindow(object):
         self.label_43.setText(_translate("UserWindow", "P_on"))
         self.label_44.setText(_translate("UserWindow", "P_off"))
         self.label_45.setText(_translate("UserWindow", "Количество включенный блоков:"))
+        self.label_46.setText(_translate("UserWindow", "Позже график будет тут"))
+
     def showyourdevise(self):
         print("GO!")
+
         self.listWidget_2.clear()
+
         current = self.listWidget.currentItem().text()
         print(current)
-        a = listdir(path="example")
-        print(a)
-        for i in a:
-            b = i.split('.')[0]
-            if current in b:
-                print(b)
-                self.listWidget_2.addItem(b)
+
+        data_filenames = os.listdir(path="lib/example")
+        print(data_filenames)
+
+        for filename in data_filenames:
+            station = filename.split(".")[0]
+
+            if current in station:
+                print(station)
+                self.listWidget_2.addItem(station)
+
         self.listWidget_2.sortItems()
+
     def seetelemetry(self):
-        a = self.listWidget_2.currentItem().text()+'.csv'
+        filename = self.listWidget_2.currentItem().text() + ".csv"
+
         self.listWidget_3.clear()
-        f = open("F:/project/ElectroProject962/example/"+a)
-        k = 0
-        for i in f:
-            k += 1
-        f.close()
-        self.listWidget_3.addItems(map(str,list(range(1,k+1))))
 
+        with open(f"lib/example/{filename}") as station_content:
+            length = len(station_content.readlines())
 
+        self.listWidget_3.addItems(map(str, list(range(1, length + 1))))
 
     def view(self):
-        a = self.listWidget_2.currentItem().text()+'.csv'
-        b = self.listWidget_3.currentItem().text()
-        f = open("F:/project/ElectroProject962/example/"+a).readlines()
-        string = f[int(b)-1].split(';')
-        print(string)
-        self.lineEdit.setText(string[0])
-        self.lineEdit_2.setText(string[1])
-        for i in range(3,27):
-            exec('self.lineEdit_%s.setText(string[i-1])'%i)
-        self.lineEdit_30.setText(string[-1])
-        fon =  sum(list(map(float,string[5:8])))
+        filename = self.listWidget_2.currentItem().text() + ".csv"
+        row_number = int(self.listWidget_3.currentItem().text()) - 1
+        print(row_number)
+
+        station_content = open(f"lib/example/{filename}").readlines()
+        content_list = station_content[row_number].split(";")
+        print(content_list)
+
+        self.lineEdit.setText(content_list[0])
+        self.lineEdit_2.setText(content_list[1])
+
+        for i in range(3, 27):
+            exec("self.lineEdit_%s.setText(content_list[i-1])" % i)
+
+        self.lineEdit_30.setText(content_list[-1])
+
+        fon = sum(list(map(float, content_list[5:8])))
         print(fon)
+
         foff = 0
-        if string[17]!="":
-            foff = sum(list(map(float,string[17:20])))
+
+        if content_list[17] != "":
+            foff = sum(list(map(float, content_list[17:20])))
             print(foff)
+
         self.lineEdit_27.setText(str(fon))
+
         if foff != 0:
             self.lineEdit_28.setText(str(foff))
-            self.lineEdit_29.setText(str((foff-fon)/foff*100))
+            self.lineEdit_29.setText(str((foff-fon) / foff * 100))
+
     def maketable(self):
-        table2 = []
-        datestart = datetime.strptime(self.dateTimeEdit.text(),"%d.%m.%Y %H:%M:%S")
-        dateend = datetime.strptime(self.dateTimeEdit_2.text(),"%d.%m.%Y %H:%M:%S")
-        print(datestart)
-        print(dateend)
+        global table2
+
+        date_start = dat.datetime.strptime(self.dateTimeEdit.text(), "%d.%m.%Y %H:%M:%S")
+        date_end = dat.datetime.strptime(self.dateTimeEdit_2.text(), "%d.%m.%Y %H:%M:%S")
+        print(date_start)
+        print(date_end)
+
         current = self.listWidget.currentItem().text()
-        #print(current)
-        a = listdir(path="example")
-        #print(a)
-        for i in a:
-            b = i.split('.')[0]
-            if current in b:
-                h = open("F:/project/ElectroProject962/example/"+i).readlines()
-                for j in h:
-                    e = j.split(";")
-                    datestartfile = datetime.strptime(e[0], "%d.%m.%Y %H:%M:%S")
-                    dateendfile = datetime.strptime(e[1], "%d.%m.%Y %H:%M:%S")
-                    #print(datestartfile)
-                    #print(dateendfile)
-                    if datestart <= datestartfile and dateend >= dateendfile:
-                        table2.append(e)
+        # print(current)
+
+        data_filenames = os.listdir(path="lib/example")
+        # print(data_filenames)
+
+        for filename in data_filenames:
+            station = filename.split(".")[0]
+
+            if current in station:
+                station_content = open(f"lib/example/{filename}").readlines()
+
+                for line in station_content:
+                    content_list = line.split(";")
+                    # print(content_list)
+
+                    date_start_file = dat.datetime.strptime(content_list[0], "%d.%m.%Y %H:%M:%S")
+                    date_end_file = dat.datetime.strptime(content_list[1], "%d.%m.%Y %H:%M:%S")
+                    # print("===================")
+                    # print(date_start)
+                    # print(date_end)
+                    # print(date_start_file)
+                    # print(date_end_file)
+
+                    if date_start <= date_start_file and date_end >= date_end_file:
+                        table2.append(content_list)
+
                         print("YES!")
+
         print(table2)
 
+        with open("out/table.csv", "w+") as table_output:
+            writer = csv.writer(table_output)
+            writer.writerows(table2)
+
+        print("Writing done")
+
     def seeGraph(self):
+        global table2
+        print(table2)
 
+        y1 = []
+        y2 = []
+        y3 = []
+        y4 = []
+        y5 = []
+        y6 = []
 
-            x = np.linspace(-5, 2, 100)                     # от -5 до 2 сделать 100 точек
-            y1 = x**3 + 5*x**2 + 10                         # y1 - тоже много точек
-            y2 = 3*x**2 + 10*x
-            y3 = 6*x + 10
+        table2.sort(key=lambda x: dat.datetime.strptime(x[0], "%d.%m.%Y %H:%M:%S"))
+        print(table2)
 
-            fig, ax = plt.subplots()                        # будет 1 график, на нем:
-            ax.plot(x, y1, color="blue", label="y(x)")      # функция y1(x), синий, надпись y(x)
-            ax.plot(x, y2, color="red", label="y'(x)")      # функция y2(x), красный, надпись y'(x)
-            ax.plot(x, y3, color="green", label="y''(x)")   # функция y3(x), зеленый, надпись y''(x)
-            ax.set_xlabel("x")                              # подпись у горизонтальной оси х
-            ax.set_ylabel("y")                              # подпись у вертикальной оси y
-            ax.legend()                                     # показывать условные обозначения
+        for row in table2:
+            y1.append(float(row[5]))
+            y2.append(float(row[6]))
+            y3.append(float(row[7]))
+            y4.append(float(row[2]))
+            y5.append(float(row[3]))
+            y6.append(float(row[4]))
 
-            plt.show()                                      # показать рисунок
-            fig.savefig('1.png')                            # сохранить в файл 1.png
+        x = np.linspace(0, 101, len(y1))
+        print(x, "     ", y1, y2, y3)
+
+        fig, ax = plt.subplots()
+        fig2, ax2 = plt.subplots()
+
+        ax.plot(x, y1, color="blue", label="по фазе А")
+        ax.plot(x, y2, color="red", label="по фазе B")
+        ax.plot(x, y3, color="green", label="по фазе С")
+        ax.set_xlabel("время")
+        ax.set_ylabel("Активная мощность по фазе при включенной системе")
+        ax.legend()
+
+        ax2.plot(x, y4, color="blue", label="по фазе А")
+        ax2.plot(x, y5, color="red", label="по фазе B")
+        ax2.plot(x, y6, color="green", label="по фазе C")
+        ax2.set_xlabel("время")
+        ax2.set_ylabel("Реактивная мощность при включенной системе")
+        ax2.legend()
+
+        plt.show()
+
+        fig.savefig("out/1.png")
+        fig2.savefig("out/2.png")

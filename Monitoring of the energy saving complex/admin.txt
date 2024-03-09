@@ -1,3 +1,0 @@
-admin1 3 3
-admin2 2 2
-

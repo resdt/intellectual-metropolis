@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'F:\project\ElectroProject962\AdminWindow.ui'
+# Form implementation generated from reading ui file "AdminWindow.ui"
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_AdminWindow(object):
+
     def setupUi(self, AdminWindow):
         global k
         global _translate
@@ -183,7 +184,6 @@ class Ui_AdminWindow(object):
         QtCore.QMetaObject.connectSlotsByName(AdminWindow)
         self.pushButton_3.clicked.connect(self.saveQuit)
 
-
     def retranslateUi(self, AdminWindow):
         _translate = QtCore.QCoreApplication.translate
         AdminWindow.setWindowTitle(_translate("AdminWindow", "Form"))
@@ -269,35 +269,40 @@ class Ui_AdminWindow(object):
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.setSortingEnabled(__sortingEnabled)
         self.pushButton_3.setText(_translate("AdminWindow", "Сохранить изменения и выйти"))
-        k = 0
-        f = open("users.txt")
-        for i in f:
-            if len(i)>2:
-                login, password, numbers = i.split()
-                print(login, password, numbers)
-                item = self.tableWidget.item(k, 0)
-                item.setText(_translate("AdminWindow", str(login)))
-                item = self.tableWidget.item(k, 1)
-                item.setText(_translate("AdminWindow", str(password)))
-                item = self.tableWidget.item(k, 2)
-                item.setText(_translate("AdminWindow", str(numbers)))
-                k += 1
-        f.close()
 
+        row = 0
+        login_data = open("lib/user-data.txt")
+
+        for line in login_data:
+            if len(line) > 2:
+                login, password, numbers = line.split()
+
+                print(login, password, numbers)
+
+                item = self.tableWidget.item(row, 0)
+                item.setText(_translate("AdminWindow", str(login)))
+                item = self.tableWidget.item(row, 1)
+                item.setText(_translate("AdminWindow", str(password)))
+                item = self.tableWidget.item(row, 2)
+                item.setText(_translate("AdminWindow", str(numbers)))
+
+                row += 1
+
+        login_data.close()
 
     def saveQuit(self):
-        f = open("users.txt",'w')
-        f.close()
-        f = open("users.txt",'a+')
-        e = 1
-        for i in range(7):
-                login = self.tableWidget.item(i, 0).text()
-                password = self.tableWidget.item(i, 1).text()
-                numbers = self.tableWidget.item(i, 2).text()
-                print(login, password, numbers)
-                if len(login) > 2:
-                    f.write(login+" "+password+" "+numbers + "\n")
-                e += 1
-        f.close()
+        login_data = open("lib/user-data.txt", "w")
+        login_data.close()
+        login_data = open("lib/user-data.txt", "a+")
 
+        for row in range(7):
+            login = self.tableWidget.item(row, 0).text()
+            password = self.tableWidget.item(row, 1).text()
+            numbers = self.tableWidget.item(row, 2).text()
 
+            print(login, password, numbers)
+
+            if len(login) > 2:
+                login_data.write(f"{login} {password} {numbers}\n")
+
+        login_data.close()
