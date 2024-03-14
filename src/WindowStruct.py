@@ -1,4 +1,3 @@
-import sys
 import src.LoginPage as lp
 import src.AdminWindow as aw
 import src.UserWindow as uw
@@ -58,10 +57,3 @@ class MyWin(lp.QtWidgets.QMainWindow):
         self.ui = uw.Ui_UserWindow()
         self.ui.setupUi(self.window2)
         self.window2.show()
-
-
-if __name__ == "__main__":
-    app = lp.QtWidgets.QApplication(sys.argv)
-    window = MyWin()
-    window.show()
-    app.exec_()
