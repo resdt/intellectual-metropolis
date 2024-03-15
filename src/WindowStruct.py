@@ -14,32 +14,28 @@ class MyWin(lp.QtWidgets.QMainWindow):
 
     def checkUser(self):
         login_data = open("lib/user-data.txt")
-        login_now = self.ui.lineEdit.text()
-        password_now = self.ui.lineEdit_2.text()
+        cur_log = self.ui.lineEdit.text()
+        cur_pwd = self.ui.lineEdit_2.text()
 
         for line in login_data:  # Убрал проверку if len(login) > 2
             login, password, numbers = line.split()
 
-            if login_now == login and password_now == password:
-                if "admin" in login:
-                    login_data.close()
+            if cur_log == login and cur_pwd == password:
+                login_data.close()
 
+                if "admin" in login:
                     # self.ui.label_17.setText(" ")
                     self.ui.lineEdit.setText(" ")
                     self.ui.lineEdit_2.setText(" ")
                     self.openAdmin()
-
-                    break
                 else:
-                    login_data.close()
-
                     with open("tmp/temp.txt", "w") as temp_file:
                         temp_file.write(f"{login} {password} {numbers}")
 
                     # self.ui.label_17.setText(" ")
                     self.openUser()
 
-                    break
+                break
         else:
             pass
             # self.ui.label_17.setText("Неправильный логин или пароль")
@@ -47,13 +43,15 @@ class MyWin(lp.QtWidgets.QMainWindow):
         login_data.close()
 
     def openAdmin(self):
-        self.window = lp.QtWidgets.QMainWindow()
+        self.adminWindow = lp.QtWidgets.QMainWindow()
         self.ui = aw.Ui_AdminWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
+
+        self.ui.setupUi(self.adminWindow)
+        self.adminWindow.show()
 
     def openUser(self):
-        self.window2 = lp.QtWidgets.QMainWindow()
+        self.userWindow = lp.QtWidgets.QMainWindow()
         self.ui = uw.Ui_UserWindow()
-        self.ui.setupUi(self.window2)
-        self.window2.show()
+
+        self.ui.setupUi(self.userWindow)
+        self.userWindow.show()

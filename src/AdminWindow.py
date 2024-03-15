@@ -295,11 +295,10 @@ class Ui_AdminWindow(object):
         login_data.close()
         login_data = open("lib/user-data.txt", "a+")
 
-        for row in range(7):
+        for row in range(35):
             login = self.tableWidget.item(row, 0).text()
             password = self.tableWidget.item(row, 1).text()
             numbers = self.tableWidget.item(row, 2).text()
-
             print(login, password, numbers)
 
             if len(login) > 2:

@@ -14,10 +14,12 @@ import numpy as np
 import csv
 import datetime as dat
 
+
 table2 = []
 
 
 class Ui_UserWindow(object):
+
     def setupUi(self, UserWindow):
         UserWindow.setObjectName("UserWindow")
         UserWindow.resize(1003, 666)
@@ -415,8 +417,10 @@ class Ui_UserWindow(object):
     def maketable(self):
         global table2
 
-        date_start = dat.datetime.strptime(self.dateTimeEdit.text(), "%d.%m.%Y %H:%M:%S")
-        date_end = dat.datetime.strptime(self.dateTimeEdit_2.text(), "%d.%m.%Y %H:%M:%S")
+        date_start = dat.datetime.strptime(self.dateTimeEdit.text(),
+                                           "%d.%m.%Y %H:%M:%S")
+        date_end = dat.datetime.strptime(self.dateTimeEdit_2.text(),
+                                         "%d.%m.%Y %H:%M:%S")
         print(date_start)
         print(date_end)
 
@@ -436,8 +440,10 @@ class Ui_UserWindow(object):
                     content_list = line.split(";")
                     # print(content_list)
 
-                    date_start_file = dat.datetime.strptime(content_list[0], "%d.%m.%Y %H:%M:%S")
-                    date_end_file = dat.datetime.strptime(content_list[1], "%d.%m.%Y %H:%M:%S")
+                    date_start_file = dat.datetime.strptime(content_list[0],
+                                                            "%d.%m.%Y %H:%M:%S")
+                    date_end_file = dat.datetime.strptime(content_list[1],
+                                                          "%d.%m.%Y %H:%M:%S")
                     # print("===================")
                     # print(date_start)
                     # print(date_end)
@@ -468,7 +474,8 @@ class Ui_UserWindow(object):
         y5 = []
         y6 = []
 
-        table2.sort(key=lambda x: dat.datetime.strptime(x[0], "%d.%m.%Y %H:%M:%S"))
+        table2.sort(key=lambda x: dat.datetime.strptime(x[0],
+                                                   "%d.%m.%Y %H:%M:%S"))
         print(table2)
 
         for row in table2:
