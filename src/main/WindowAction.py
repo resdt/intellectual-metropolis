@@ -1,6 +1,6 @@
-import src.LoginPage as lp
-import src.AdminWindow as aw
-import src.UserWindow as uw
+import src.windows.LoginPage as lp
+import src.windows.AdminWindow as aw
+import src.windows.UserWindow as uw
 
 
 class MyWin(lp.QtWidgets.QMainWindow):

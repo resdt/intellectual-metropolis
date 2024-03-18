@@ -1,7 +1,7 @@
 import sys
 
-import src.WindowStruct as ws
-import src.LoginPage as lp
+import src.main.WindowAction as ws
+import src.windows.LoginPage as lp
 
 
 def main():
