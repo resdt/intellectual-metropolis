@@ -14,6 +14,16 @@ import numpy as np
 import csv
 import datetime as dat
 
+import src.main.PATH as path
+
+
+OUT_FOLD = path.OUT_FOLD
+
+TMP_PATH = path.TMP_PATH
+STATION_PATH = path.STATION_PATH
+TABLE_PATH = path.TABLE_PATH
+PICT1_PATH = path.PICT1_PATH
+PICT2_PATH = path.PICT2_PATH
 
 table2 = []
 
@@ -282,7 +292,7 @@ class Ui_UserWindow(object):
         self.label_46.setGeometry(QtCore.QRect(710, 500, 231, 16))
         self.label_46.setObjectName("label_46")
 
-        with open("tmp/temp.txt") as temp_file:
+        with open(TMP_PATH) as temp_file:
             temp_content = temp_file.readline().split()
             station_list = temp_content[-1].split(",")
 
@@ -349,7 +359,7 @@ class Ui_UserWindow(object):
         self.label_42.setText(_translate("UserWindow", "n"))
         self.label_43.setText(_translate("UserWindow", "P_on"))
         self.label_44.setText(_translate("UserWindow", "P_off"))
-        self.label_45.setText(_translate("UserWindow", "Количество включенный блоков:"))
+        self.label_45.setText(_translate("UserWindow", "Количество включенных блоков:"))
         self.label_46.setText(_translate("UserWindow", "Позже график будет тут"))
 
     def showyourdevise(self):
@@ -360,7 +370,7 @@ class Ui_UserWindow(object):
         current = self.listWidget.currentItem().text()
         print(current)
 
-        data_filenames = os.listdir(path="lib/example")
+        data_filenames = os.listdir(path=STATION_PATH)
         print(data_filenames)
 
         for filename in data_filenames:
@@ -377,7 +387,7 @@ class Ui_UserWindow(object):
 
         self.listWidget_3.clear()
 
-        with open(f"lib/example/{filename}") as station_content:
+        with open(f"{STATION_PATH}/{filename}") as station_content:
             length = len(station_content.readlines())
 
         self.listWidget_3.addItems(map(str, list(range(1, length + 1))))
@@ -387,7 +397,7 @@ class Ui_UserWindow(object):
         row_number = int(self.listWidget_3.currentItem().text()) - 1
         print(row_number)
 
-        station_content = open(f"lib/example/{filename}").readlines()
+        station_content = open(f"{STATION_PATH}/{filename}").readlines()
         content_list = station_content[row_number].split(";")
         print(content_list)
 
@@ -427,14 +437,14 @@ class Ui_UserWindow(object):
         current = self.listWidget.currentItem().text()
         # print(current)
 
-        data_filenames = os.listdir(path="lib/example")
+        data_filenames = os.listdir(path=STATION_PATH)
         # print(data_filenames)
 
         for filename in data_filenames:
             station = filename.split(".")[0]
 
             if current in station:
-                station_content = open(f"lib/example/{filename}").readlines()
+                station_content = open(f"{STATION_PATH}/{filename}").readlines()
 
                 for line in station_content:
                     content_list = line.split(";")
@@ -457,7 +467,9 @@ class Ui_UserWindow(object):
 
         print(table2)
 
-        with open("out/table.csv", "w+") as table_output:
+        os.makedirs(OUT_FOLD, exist_ok=True)
+
+        with open(TABLE_PATH, "w+") as table_output:
             writer = csv.writer(table_output)
             writer.writerows(table2)
 
@@ -508,5 +520,6 @@ class Ui_UserWindow(object):
 
         plt.show()
 
-        fig.savefig("out/1.png")
-        fig2.savefig("out/2.png")
+        os.makedirs(OUT_FOLD, exist_ok=True)
+        fig.savefig(PICT1_PATH)
+        fig2.savefig(PICT2_PATH)

@@ -1,0 +1,10 @@
+DATA_FOLD = "lib"
+OUT_FOLD = "out"
+TMP_FOLD = "tmp"
+
+TMP_PATH = f"{TMP_FOLD}/temp.txt"
+STATION_PATH = f"{DATA_FOLD}/example"
+USER_PATH = f"{DATA_FOLD}/user-data.txt"
+TABLE_PATH = f"{OUT_FOLD}/table.csv"
+PICT1_PATH = f"{OUT_FOLD}/1.png"
+PICT2_PATH = f"{OUT_FOLD}/2.png"

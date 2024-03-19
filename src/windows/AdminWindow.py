@@ -9,6 +9,11 @@
 
 from PyQt5 import QtCore, QtWidgets
 
+import src.main.PATH as path
+
+
+USER_PATH = path.USER_PATH
+
 
 class Ui_AdminWindow(object):
 
@@ -271,7 +276,7 @@ class Ui_AdminWindow(object):
         self.pushButton_3.setText(_translate("AdminWindow", "Сохранить изменения и выйти"))
 
         row = 0
-        login_data = open("lib/user-data.txt")
+        login_data = open(USER_PATH)
 
         for line in login_data:
             if len(line) > 2:
@@ -291,11 +296,11 @@ class Ui_AdminWindow(object):
         login_data.close()
 
     def saveQuit(self):
-        login_data = open("lib/user-data.txt", "w")
+        login_data = open(USER_PATH, "w")
         login_data.close()
-        login_data = open("lib/user-data.txt", "a+")
+        login_data = open(USER_PATH, "a+")
 
-        for row in range(35):
+        for row in range(7):
             login = self.tableWidget.item(row, 0).text()
             password = self.tableWidget.item(row, 1).text()
             numbers = self.tableWidget.item(row, 2).text()

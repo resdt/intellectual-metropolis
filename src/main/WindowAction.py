@@ -1,6 +1,15 @@
+import os
+
+import src.main.PATH as path
 import src.windows.LoginPage as lp
 import src.windows.AdminWindow as aw
 import src.windows.UserWindow as uw
+
+
+TMP_FOLD = path.TMP_FOLD
+
+USER_PATH = path.USER_PATH
+TMP_PATH = path.TMP_PATH
 
 
 class MyWin(lp.QtWidgets.QMainWindow):
@@ -13,7 +22,7 @@ class MyWin(lp.QtWidgets.QMainWindow):
         self.ui.pushButton_5.clicked.connect(self.checkUser)
 
     def checkUser(self):
-        login_data = open("lib/user-data.txt")
+        login_data = open(USER_PATH)
         cur_log = self.ui.lineEdit.text()
         cur_pwd = self.ui.lineEdit_2.text()
 
@@ -29,7 +38,9 @@ class MyWin(lp.QtWidgets.QMainWindow):
                     self.ui.lineEdit_2.setText(" ")
                     self.openAdmin()
                 else:
-                    with open("tmp/temp.txt", "w") as temp_file:
+                    os.makedirs(TMP_FOLD, exist_ok=True)
+
+                    with open(TMP_PATH, "w") as temp_file:
                         temp_file.write(f"{login} {password} {numbers}")
 
                     # self.ui.label_17.setText(" ")
