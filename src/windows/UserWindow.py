@@ -12,20 +12,21 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+import pandas as pd
 import datetime as dat
 
 import src.main.PATH as path
 
 
+TMP_FOLD = path.TMP_FOLD
 OUT_FOLD = path.OUT_FOLD
 
 TMP_PATH = path.TMP_PATH
 STATION_PATH = path.STATION_PATH
 TABLE_PATH = path.TABLE_PATH
+TABLE_FILE = path.TABLE_FILE
 PICT1_PATH = path.PICT1_PATH
 PICT2_PATH = path.PICT2_PATH
-
-table2 = []
 
 
 class Ui_UserWindow(object):
@@ -368,16 +369,11 @@ class Ui_UserWindow(object):
         self.listWidget_2.clear()
 
         current = self.listWidget.currentItem().text()
-        print(current)
-
         data_filenames = os.listdir(path=STATION_PATH)
-        print(data_filenames)
 
         for filename in data_filenames:
-            station = filename.split(".")[0]
-
-            if current in station:
-                print(station)
+            if current in filename:
+                station = filename.split(".")[0]
                 self.listWidget_2.addItem(station)
 
         self.listWidget_2.sortItems()
@@ -410,13 +406,10 @@ class Ui_UserWindow(object):
         self.lineEdit_30.setText(content_list[-1])
 
         fon = sum(list(map(float, content_list[5:8])))
-        print(fon)
-
         foff = 0
 
         if content_list[17] != "":
             foff = sum(list(map(float, content_list[17:20])))
-            print(foff)
 
         self.lineEdit_27.setText(str(fon))
 
@@ -425,7 +418,7 @@ class Ui_UserWindow(object):
             self.lineEdit_29.setText(str((foff-fon) / foff * 100))
 
     def maketable(self):
-        global table2
+        table2 = []
 
         date_start = dat.datetime.strptime(self.dateTimeEdit.text(),
                                            "%d.%m.%Y %H:%M:%S")
@@ -435,20 +428,16 @@ class Ui_UserWindow(object):
         print(date_end)
 
         current = self.listWidget.currentItem().text()
-        # print(current)
+        print(current)
 
         data_filenames = os.listdir(path=STATION_PATH)
-        # print(data_filenames)
 
         for filename in data_filenames:
-            station = filename.split(".")[0]
-
-            if current in station:
+            if current in filename:
                 station_content = open(f"{STATION_PATH}/{filename}").readlines()
 
                 for line in station_content:
                     content_list = line.split(";")
-                    # print(content_list)
 
                     date_start_file = dat.datetime.strptime(content_list[0],
                                                             "%d.%m.%Y %H:%M:%S")
@@ -463,63 +452,77 @@ class Ui_UserWindow(object):
                     if date_start <= date_start_file and date_end >= date_end_file:
                         table2.append(content_list)
 
-                        print("YES!")
-
-        print(table2)
+                        # print("YES!")
 
         os.makedirs(OUT_FOLD, exist_ok=True)
+        os.makedirs(TMP_FOLD, exist_ok=True)
 
-        with open(TABLE_PATH, "w+") as table_output:
+        table2.sort(key=lambda x: dat.datetime.strptime(x[0],
+                                                   "%d.%m.%Y %H:%M:%S"))
+
+        with open(TABLE_PATH, "w", newline="") as table_output:
             writer = csv.writer(table_output)
+            writer.writerows(table2)
+
+        with open(f"{TMP_FOLD}/{TABLE_FILE}", "w", newline="") as tmp_table:
+            writer = csv.writer(tmp_table)
+            writer.writerow(["Measurement start time",
+                             "Measurement end time",
+                             "Reactive power phase A on",
+                             "Reactive power phase B on",
+                             "Reactive power phase C on",
+                             "Active power phase A on",
+                             "Active power phase B on",
+                             "Active power phase C on",
+                             "Voltage phase A on",
+                             "Voltage phase B on",
+                             "Voltage phase C on",
+                             "Cosine phase A on",
+                             "Cosine phase B on",
+                             "Cosine phase C on",
+                             "Reactive power phase A off",
+                             "Reactive power phase B off",
+                             "Reactive power phase C off",
+                             "Active power phase A off",
+                             "Active power phase B off",
+                             "Active power phase C off",
+                             "Voltage phase A off",
+                             "Voltage phase B off",
+                             "Voltage phase C off",
+                             "Cosine phase A off",
+                             "Cosine phase B off",
+                             "Cosine phase C off",
+                             "Number of powered blocks"])
             writer.writerows(table2)
 
         print("Writing done")
 
     def seeGraph(self):
-        global table2
-        print(table2)
+        df = pd.read_csv(f"{TMP_FOLD}/{TABLE_FILE}")
 
-        y1 = []
-        y2 = []
-        y3 = []
-        y4 = []
-        y5 = []
-        y6 = []
+        plt.style.use("ggplot")
+        plot_legend = ["по фазе A",
+                       "по фазе B",
+                       "по фазе C"]
 
-        table2.sort(key=lambda x: dat.datetime.strptime(x[0],
-                                                   "%d.%m.%Y %H:%M:%S"))
-        print(table2)
+        ax = df.plot(figsize=(7, 6),
+                     xlabel="Время",
+                     ylabel="Активная мощность при включенной системе",
+                     y=["Active power phase A on",
+                        "Active power phase B on",
+                        "Active power phase C on"])
+        ax.legend(plot_legend)
 
-        for row in table2:
-            y1.append(float(row[5]))
-            y2.append(float(row[6]))
-            y3.append(float(row[7]))
-            y4.append(float(row[2]))
-            y5.append(float(row[3]))
-            y6.append(float(row[4]))
-
-        x = np.linspace(0, 101, len(y1))
-        print(x, "     ", y1, y2, y3)
-
-        fig, ax = plt.subplots()
-        fig2, ax2 = plt.subplots()
-
-        ax.plot(x, y1, color="blue", label="по фазе А")
-        ax.plot(x, y2, color="red", label="по фазе B")
-        ax.plot(x, y3, color="green", label="по фазе С")
-        ax.set_xlabel("время")
-        ax.set_ylabel("Активная мощность по фазе при включенной системе")
-        ax.legend()
-
-        ax2.plot(x, y4, color="blue", label="по фазе А")
-        ax2.plot(x, y5, color="red", label="по фазе B")
-        ax2.plot(x, y6, color="green", label="по фазе C")
-        ax2.set_xlabel("время")
-        ax2.set_ylabel("Реактивная мощность при включенной системе")
-        ax2.legend()
+        ax2 = df.plot(figsize=(7, 6),
+                      xlabel="Время",
+                      ylabel="Реактивная мощность при включенной системе",
+                      y=["Reactive power phase A on",
+                         "Reactive power phase B on",
+                         "Reactive power phase C on"])
+        ax2.legend(plot_legend)
 
         plt.show()
 
         os.makedirs(OUT_FOLD, exist_ok=True)
-        fig.savefig(PICT1_PATH)
-        fig2.savefig(PICT2_PATH)
+        ax.figure.savefig(PICT1_PATH)
+        ax2.figure.savefig(PICT2_PATH)
