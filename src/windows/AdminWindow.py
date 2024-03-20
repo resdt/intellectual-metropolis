@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtWidgets
 import src.main.PATH as path
 
 
-USER_PATH = path.USER_PATH
+USER_DATA_FILE_PATH = path.USER_DATA_FILE_PATH
 
 
 class Ui_AdminWindow(object):
@@ -276,7 +276,7 @@ class Ui_AdminWindow(object):
         self.pushButton_3.setText(_translate("AdminWindow", "Сохранить изменения и выйти"))
 
         row = 0
-        login_data = open(USER_PATH)
+        login_data = open(USER_DATA_FILE_PATH)
 
         for line in login_data:
             if len(line) > 2:
@@ -296,9 +296,9 @@ class Ui_AdminWindow(object):
         login_data.close()
 
     def saveQuit(self):
-        login_data = open(USER_PATH, "w")
+        login_data = open(USER_DATA_FILE_PATH, "w")
         login_data.close()
-        login_data = open(USER_PATH, "a+")
+        login_data = open(USER_DATA_FILE_PATH, "a+")
 
         for row in range(7):
             login = self.tableWidget.item(row, 0).text()

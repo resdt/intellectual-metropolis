@@ -8,8 +8,8 @@ import src.windows.UserWindow as uw
 
 TMP_FOLD = path.TMP_FOLD
 
-USER_PATH = path.USER_PATH
-TMP_PATH = path.TMP_PATH
+USER_DATA_FILE_PATH = path.USER_DATA_FILE_PATH
+TMP_FILE_PATH = path.TMP_FILE_PATH
 
 
 class MyWin(lp.QtWidgets.QMainWindow):
@@ -22,7 +22,7 @@ class MyWin(lp.QtWidgets.QMainWindow):
         self.ui.pushButton_5.clicked.connect(self.checkUser)
 
     def checkUser(self):
-        login_data = open(USER_PATH)
+        login_data = open(USER_DATA_FILE_PATH)
         cur_log = self.ui.lineEdit.text()
         cur_pwd = self.ui.lineEdit_2.text()
 
@@ -40,7 +40,7 @@ class MyWin(lp.QtWidgets.QMainWindow):
                 else:
                     os.makedirs(TMP_FOLD, exist_ok=True)
 
-                    with open(TMP_PATH, "w") as temp_file:
+                    with open(TMP_FILE_PATH, "w") as temp_file:
                         temp_file.write(f"{login} {password} {numbers}")
 
                     # self.ui.label_17.setText(" ")

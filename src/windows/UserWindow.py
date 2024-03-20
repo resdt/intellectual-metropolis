@@ -9,9 +9,8 @@
 
 from PyQt5 import QtCore, QtWidgets
 import os
-import matplotlib.pyplot as plt
-import numpy as np
 import csv
+import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dat
 
@@ -21,12 +20,12 @@ import src.main.PATH as path
 TMP_FOLD = path.TMP_FOLD
 OUT_FOLD = path.OUT_FOLD
 
-TMP_PATH = path.TMP_PATH
-STATION_PATH = path.STATION_PATH
-TABLE_PATH = path.TABLE_PATH
-TABLE_FILE = path.TABLE_FILE
-PICT1_PATH = path.PICT1_PATH
-PICT2_PATH = path.PICT2_PATH
+TMP_FILE_PATH = path.TMP_FILE_PATH
+STATION_DATA_FOLD = path.STATION_DATA_FOLD
+OUT_TABLE_PATH = path.OUT_TABLE_PATH
+PLOT_TABLE_PATH = path.PLOT_TABLE_PATH
+OUT_PICT1_PATH = path.OUT_PICT1_PATH
+OUT_PICT2_PATH = path.OUT_PICT2_PATH
 
 
 class Ui_UserWindow(object):
@@ -293,7 +292,7 @@ class Ui_UserWindow(object):
         self.label_46.setGeometry(QtCore.QRect(710, 500, 231, 16))
         self.label_46.setObjectName("label_46")
 
-        with open(TMP_PATH) as temp_file:
+        with open(TMP_FILE_PATH) as temp_file:
             temp_content = temp_file.readline().split()
             station_list = temp_content[-1].split(",")
 
@@ -369,7 +368,7 @@ class Ui_UserWindow(object):
         self.listWidget_2.clear()
 
         current = self.listWidget.currentItem().text()
-        data_filenames = os.listdir(path=STATION_PATH)
+        data_filenames = os.listdir(path=STATION_DATA_FOLD)
 
         for filename in data_filenames:
             if current in filename:
@@ -383,7 +382,7 @@ class Ui_UserWindow(object):
 
         self.listWidget_3.clear()
 
-        with open(f"{STATION_PATH}/{filename}") as station_content:
+        with open(f"{STATION_DATA_FOLD}/{filename}") as station_content:
             length = len(station_content.readlines())
 
         self.listWidget_3.addItems(map(str, list(range(1, length + 1))))
@@ -393,7 +392,7 @@ class Ui_UserWindow(object):
         row_number = int(self.listWidget_3.currentItem().text()) - 1
         print(row_number)
 
-        station_content = open(f"{STATION_PATH}/{filename}").readlines()
+        station_content = open(f"{STATION_DATA_FOLD}/{filename}").readlines()
         content_list = station_content[row_number].split(";")
         print(content_list)
 
@@ -418,7 +417,7 @@ class Ui_UserWindow(object):
             self.lineEdit_29.setText(str((foff-fon) / foff * 100))
 
     def maketable(self):
-        table2 = []
+        data_table = []
 
         date_start = dat.datetime.strptime(self.dateTimeEdit.text(),
                                            "%d.%m.%Y %H:%M:%S")
@@ -430,11 +429,11 @@ class Ui_UserWindow(object):
         current = self.listWidget.currentItem().text()
         print(current)
 
-        data_filenames = os.listdir(path=STATION_PATH)
+        data_filenames = os.listdir(path=STATION_DATA_FOLD)
 
         for filename in data_filenames:
             if current in filename:
-                station_content = open(f"{STATION_PATH}/{filename}").readlines()
+                station_content = open(f"{STATION_DATA_FOLD}/{filename}").readlines()
 
                 for line in station_content:
                     content_list = line.split(";")
@@ -450,21 +449,21 @@ class Ui_UserWindow(object):
                     # print(date_end_file)
 
                     if date_start <= date_start_file and date_end >= date_end_file:
-                        table2.append(content_list)
+                        data_table.append(content_list)
 
                         # print("YES!")
 
         os.makedirs(OUT_FOLD, exist_ok=True)
         os.makedirs(TMP_FOLD, exist_ok=True)
 
-        table2.sort(key=lambda x: dat.datetime.strptime(x[0],
+        data_table.sort(key=lambda x: dat.datetime.strptime(x[0],
                                                    "%d.%m.%Y %H:%M:%S"))
 
-        with open(TABLE_PATH, "w", newline="") as table_output:
+        with open(OUT_TABLE_PATH, "w", newline="") as table_output:
             writer = csv.writer(table_output)
-            writer.writerows(table2)
+            writer.writerows(data_table)
 
-        with open(f"{TMP_FOLD}/{TABLE_FILE}", "w", newline="") as tmp_table:
+        with open(PLOT_TABLE_PATH, "w", newline="") as tmp_table:
             writer = csv.writer(tmp_table)
             writer.writerow(["Measurement start time",
                              "Measurement end time",
@@ -493,12 +492,12 @@ class Ui_UserWindow(object):
                              "Cosine phase B off",
                              "Cosine phase C off",
                              "Number of powered blocks"])
-            writer.writerows(table2)
+            writer.writerows(data_table)
 
         print("Writing done")
 
     def seeGraph(self):
-        df = pd.read_csv(f"{TMP_FOLD}/{TABLE_FILE}")
+        df = pd.read_csv(PLOT_TABLE_PATH)
 
         plt.style.use("ggplot")
         plot_legend = ["по фазе A",
@@ -524,5 +523,5 @@ class Ui_UserWindow(object):
         plt.show()
 
         os.makedirs(OUT_FOLD, exist_ok=True)
-        ax.figure.savefig(PICT1_PATH)
-        ax2.figure.savefig(PICT2_PATH)
+        ax.figure.savefig(OUT_PICT1_PATH)
+        ax2.figure.savefig(OUT_PICT2_PATH)
