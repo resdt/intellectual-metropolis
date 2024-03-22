@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 import src.main.PATH as path
 import src.windows.LoginPage as lp
@@ -8,8 +9,9 @@ import src.windows.UserWindow as uw
 
 TMP_FOLD = path.TMP_FOLD
 
+ADMIN_DATA_FILE_PATH = path.ADMIN_DATA_FILE_PATH
 USER_DATA_FILE_PATH = path.USER_DATA_FILE_PATH
-TMP_FILE_PATH = path.TMP_FILE_PATH
+CUR_LOGIN_DATA_PATH = path.CUR_LOGIN_DATA_PATH
 
 
 class MyWin(lp.QtWidgets.QMainWindow):
@@ -19,48 +21,39 @@ class MyWin(lp.QtWidgets.QMainWindow):
 
         self.ui = lp.Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.pushButton_5.clicked.connect(self.checkUser)
+        self.ui.pushButton_5.clicked.connect(self.check_login)
 
-    def checkUser(self):
-        login_data = open(USER_DATA_FILE_PATH)
-        cur_log = self.ui.lineEdit.text()
-        cur_pwd = self.ui.lineEdit_2.text()
+    def check_login(self):
+        admin_df = pd.read_csv(ADMIN_DATA_FILE_PATH, dtype=str)
+        user_df = pd.read_csv(USER_DATA_FILE_PATH, dtype=str)
 
-        for line in login_data:  # Убрал проверку if len(login) > 2
-            login, password, numbers = line.split()
+        cur_login = self.ui.lineEdit.text()
+        cur_passwd = self.ui.lineEdit_2.text()
 
-            if cur_log == login and cur_pwd == password:
-                login_data.close()
+        if admin_df.loc[(admin_df["Login"] == cur_login) &
+                        (admin_df["Password"] == cur_passwd)].any().any():
+            self.ui.lineEdit.setText(" ")
+            self.ui.lineEdit_2.setText(" ")
+            self.open_admin_window()
+        elif user_df.loc[(user_df["Login"] == cur_login) &
+                         (user_df["Password"] == cur_passwd)].any().any():
+            df_row = user_df[user_df["Login"] == cur_login]
 
-                if "admin" in login:
-                    # self.ui.label_17.setText(" ")
-                    self.ui.lineEdit.setText(" ")
-                    self.ui.lineEdit_2.setText(" ")
-                    self.openAdmin()
-                else:
-                    os.makedirs(TMP_FOLD, exist_ok=True)
+            os.makedirs(TMP_FOLD, exist_ok=True)
 
-                    with open(TMP_FILE_PATH, "w") as temp_file:
-                        temp_file.write(f"{login} {password} {numbers}")
+            with open(CUR_LOGIN_DATA_PATH, "w", newline="") as login_file:
+                df_row.to_csv(login_file, index=False)
 
-                    # self.ui.label_17.setText(" ")
-                    self.openUser()
+            self.open_user_window()
 
-                break
-        else:
-            pass
-            # self.ui.label_17.setText("Неправильный логин или пароль")
-
-        login_data.close()
-
-    def openAdmin(self):
+    def open_admin_window(self):
         self.adminWindow = lp.QtWidgets.QMainWindow()
         self.ui = aw.Ui_AdminWindow()
 
         self.ui.setupUi(self.adminWindow)
         self.adminWindow.show()
 
-    def openUser(self):
+    def open_user_window(self):
         self.userWindow = lp.QtWidgets.QMainWindow()
         self.ui = uw.Ui_UserWindow()
 

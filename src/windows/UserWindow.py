@@ -20,7 +20,7 @@ import src.main.PATH as path
 TMP_FOLD = path.TMP_FOLD
 OUT_FOLD = path.OUT_FOLD
 
-TMP_FILE_PATH = path.TMP_FILE_PATH
+CUR_LOGIN_DATA_PATH = path.CUR_LOGIN_DATA_PATH
 STATION_DATA_FOLD = path.STATION_DATA_FOLD
 OUT_TABLE_PATH = path.OUT_TABLE_PATH
 PLOT_TABLE_PATH = path.PLOT_TABLE_PATH
@@ -292,17 +292,17 @@ class Ui_UserWindow(object):
         self.label_46.setGeometry(QtCore.QRect(710, 500, 231, 16))
         self.label_46.setObjectName("label_46")
 
-        with open(TMP_FILE_PATH) as temp_file:
-            temp_content = temp_file.readline().split()
-            station_list = temp_content[-1].split(",")
+        df_row = pd.read_csv(CUR_LOGIN_DATA_PATH)
+        available_stations = df_row.iloc[:, 2:].dropna(axis=1)
+        station_list = available_stations.values.flatten().tolist()
 
         self.listWidget.addItems(station_list)
 
-        self.pushButton.clicked.connect(self.showyourdevise)
-        self.pushButton_2.clicked.connect(self.seetelemetry)
-        self.listWidget_3.itemClicked.connect(self.view)
-        self.pushButton_4.clicked.connect(self.maketable)
-        self.pushButton_3.clicked.connect(self.seeGraph)
+        self.pushButton.clicked.connect(self.show_available_stations)
+        self.pushButton_2.clicked.connect(self.load_telemetry_data)
+        self.listWidget_3.itemClicked.connect(self.view_station_data)
+        self.pushButton_4.clicked.connect(self.make_table)
+        self.pushButton_3.clicked.connect(self.make_plots)
         self.retranslateUi(UserWindow)
         QtCore.QMetaObject.connectSlotsByName(UserWindow)
 
@@ -362,7 +362,7 @@ class Ui_UserWindow(object):
         self.label_45.setText(_translate("UserWindow", "Количество включенных блоков:"))
         self.label_46.setText(_translate("UserWindow", "Позже график будет тут"))
 
-    def showyourdevise(self):
+    def show_available_stations(self):
         print("GO!")
 
         self.listWidget_2.clear()
@@ -377,7 +377,7 @@ class Ui_UserWindow(object):
 
         self.listWidget_2.sortItems()
 
-    def seetelemetry(self):
+    def load_telemetry_data(self):
         filename = self.listWidget_2.currentItem().text() + ".csv"
 
         self.listWidget_3.clear()
@@ -387,20 +387,19 @@ class Ui_UserWindow(object):
 
         self.listWidget_3.addItems(map(str, list(range(1, length + 1))))
 
-    def view(self):
+    def view_station_data(self):
         filename = self.listWidget_2.currentItem().text() + ".csv"
         row_number = int(self.listWidget_3.currentItem().text()) - 1
-        print(row_number)
 
         station_content = open(f"{STATION_DATA_FOLD}/{filename}").readlines()
         content_list = station_content[row_number].split(";")
-        print(content_list)
 
         self.lineEdit.setText(content_list[0])
         self.lineEdit_2.setText(content_list[1])
 
-        for i in range(3, 27):
-            exec("self.lineEdit_%s.setText(content_list[i-1])" % i)
+        for column in range(3, 27):
+            exec("self.lineEdit_%s.setText(content_list[%d-1])" % (column,
+                                                                   column))
 
         self.lineEdit_30.setText(content_list[-1])
 
@@ -416,23 +415,19 @@ class Ui_UserWindow(object):
             self.lineEdit_28.setText(str(foff))
             self.lineEdit_29.setText(str((foff-fon) / foff * 100))
 
-    def maketable(self):
+    def make_table(self):
         data_table = []
 
         date_start = dat.datetime.strptime(self.dateTimeEdit.text(),
                                            "%d.%m.%Y %H:%M:%S")
         date_end = dat.datetime.strptime(self.dateTimeEdit_2.text(),
                                          "%d.%m.%Y %H:%M:%S")
-        print(date_start)
-        print(date_end)
 
-        current = self.listWidget.currentItem().text()
-        print(current)
-
+        cur_station = self.listWidget.currentItem().text()
         data_filenames = os.listdir(path=STATION_DATA_FOLD)
 
         for filename in data_filenames:
-            if current in filename:
+            if cur_station in filename:
                 station_content = open(f"{STATION_DATA_FOLD}/{filename}").readlines()
 
                 for line in station_content:
@@ -442,22 +437,15 @@ class Ui_UserWindow(object):
                                                             "%d.%m.%Y %H:%M:%S")
                     date_end_file = dat.datetime.strptime(content_list[1],
                                                           "%d.%m.%Y %H:%M:%S")
-                    # print("===================")
-                    # print(date_start)
-                    # print(date_end)
-                    # print(date_start_file)
-                    # print(date_end_file)
 
                     if date_start <= date_start_file and date_end >= date_end_file:
                         data_table.append(content_list)
-
-                        # print("YES!")
 
         os.makedirs(OUT_FOLD, exist_ok=True)
         os.makedirs(TMP_FOLD, exist_ok=True)
 
         data_table.sort(key=lambda x: dat.datetime.strptime(x[0],
-                                                   "%d.%m.%Y %H:%M:%S"))
+                                                       "%d.%m.%Y %H:%M:%S"))
 
         with open(OUT_TABLE_PATH, "w", newline="") as table_output:
             writer = csv.writer(table_output)
@@ -496,7 +484,7 @@ class Ui_UserWindow(object):
 
         print("Writing done")
 
-    def seeGraph(self):
+    def make_plots(self):
         df = pd.read_csv(PLOT_TABLE_PATH)
 
         plt.style.use("ggplot")

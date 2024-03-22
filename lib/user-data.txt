@@ -1,5 +1,0 @@
-admin1 1 all
-admin2 2 all
-user1 1 a,b
-user2 2 a,b,c
-user3 3 a,b,c

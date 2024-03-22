@@ -7,18 +7,24 @@
 # WARNING! All changes made in this file will be lost!
 
 
+import csv
 from PyQt5 import QtCore, QtWidgets
 
 import src.main.PATH as path
+import src.main.constants as cst
 
 
+ADMIN_DATA_FILE_PATH = path.ADMIN_DATA_FILE_PATH
 USER_DATA_FILE_PATH = path.USER_DATA_FILE_PATH
+
+STATION_AMOUNT = cst.STATION_AMOUNT
+ADMIN_TABLE_ROWS = cst.ADMIN_TABLE_ROWS
+ADMIN_TABLE_COLUMNS = cst.ADMIN_TABLE_COLUMNS
 
 
 class Ui_AdminWindow(object):
 
     def setupUi(self, AdminWindow):
-        global k
         global _translate
         AdminWindow.setObjectName("AdminWindow")
         AdminWindow.resize(510, 580)
@@ -54,132 +60,20 @@ class Ui_AdminWindow(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(33)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(7, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(8, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(9, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(10, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(11, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(12, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(13, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(14, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(15, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(16, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(17, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(18, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(19, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(20, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(21, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(22, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(23, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(24, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(25, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(26, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(27, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(28, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(29, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(30, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(31, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(32, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(0, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(0, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(0, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(1, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(1, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(1, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(2, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(2, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(2, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(3, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(3, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(3, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(4, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(4, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(4, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(5, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(5, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(5, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(6, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(6, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(6, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(7, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(7, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(7, 2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(8, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(8, 1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setItem(8, 2, item)
+
+        for row in range(ADMIN_TABLE_ROWS):
+            item = QtWidgets.QTableWidgetItem()
+            self.tableWidget.setVerticalHeaderItem(row, item)
+
+        for column in range(ADMIN_TABLE_COLUMNS):
+            item = QtWidgets.QTableWidgetItem()
+            self.tableWidget.setHorizontalHeaderItem(column, item)
+
+        for row in range(ADMIN_TABLE_ROWS):
+            for column in range(ADMIN_TABLE_COLUMNS):
+                item = QtWidgets.QTableWidgetItem()
+                self.tableWidget.setItem(row, column, item)
+
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.pushButton_3 = QtWidgets.QPushButton(AdminWindow)
         self.pushButton_3.setGeometry(QtCore.QRect(10, 170, 181, 41))
@@ -187,83 +81,25 @@ class Ui_AdminWindow(object):
 
         self.retranslateUi(AdminWindow)
         QtCore.QMetaObject.connectSlotsByName(AdminWindow)
-        self.pushButton_3.clicked.connect(self.saveQuit)
+        self.pushButton_3.clicked.connect(self.save_login_data)
 
     def retranslateUi(self, AdminWindow):
         _translate = QtCore.QCoreApplication.translate
         AdminWindow.setWindowTitle(_translate("AdminWindow", "Form"))
-        self.pushButton.setText(_translate("AdminWindow", "Добавить Администратора"))
-        self.pushButton_2.setText(_translate("AdminWindow", "Добавить пользователя"))
+        self.pushButton.setText(_translate("AdminWindow",
+                                           "Добавить администратора"))
+        self.pushButton_2.setText(_translate("AdminWindow",
+                                             "Добавить пользователя"))
         self.label.setText(_translate("AdminWindow", "Логин:"))
         self.label_2.setText(_translate("AdminWindow", "Пароль:"))
-        self.label_3.setText(_translate("AdminWindow", "Серийные номера пользователя"))
+        self.label_3.setText(_translate("AdminWindow",
+                                        "Серийные номера пользователя"))
         self.tableWidget.setSortingEnabled(True)
-        item = self.tableWidget.verticalHeaderItem(0)
-        item.setText(_translate("AdminWindow", "1"))
-        item = self.tableWidget.verticalHeaderItem(1)
-        item.setText(_translate("AdminWindow", "2"))
-        item = self.tableWidget.verticalHeaderItem(2)
-        item.setText(_translate("AdminWindow", "3"))
-        item = self.tableWidget.verticalHeaderItem(3)
-        item.setText(_translate("AdminWindow", "4"))
-        item = self.tableWidget.verticalHeaderItem(4)
-        item.setText(_translate("AdminWindow", "5"))
-        item = self.tableWidget.verticalHeaderItem(5)
-        item.setText(_translate("AdminWindow", "6"))
-        item = self.tableWidget.verticalHeaderItem(6)
-        item.setText(_translate("AdminWindow", "7"))
-        item = self.tableWidget.verticalHeaderItem(7)
-        item.setText(_translate("AdminWindow", "8"))
-        item = self.tableWidget.verticalHeaderItem(8)
-        item.setText(_translate("AdminWindow", "9"))
-        item = self.tableWidget.verticalHeaderItem(9)
-        item.setText(_translate("AdminWindow", "10"))
-        item = self.tableWidget.verticalHeaderItem(10)
-        item.setText(_translate("AdminWindow", "11"))
-        item = self.tableWidget.verticalHeaderItem(11)
-        item.setText(_translate("AdminWindow", "12"))
-        item = self.tableWidget.verticalHeaderItem(12)
-        item.setText(_translate("AdminWindow", "13"))
-        item = self.tableWidget.verticalHeaderItem(13)
-        item.setText(_translate("AdminWindow", "14"))
-        item = self.tableWidget.verticalHeaderItem(14)
-        item.setText(_translate("AdminWindow", "15"))
-        item = self.tableWidget.verticalHeaderItem(15)
-        item.setText(_translate("AdminWindow", "16"))
-        item = self.tableWidget.verticalHeaderItem(16)
-        item.setText(_translate("AdminWindow", "17"))
-        item = self.tableWidget.verticalHeaderItem(17)
-        item.setText(_translate("AdminWindow", "18"))
-        item = self.tableWidget.verticalHeaderItem(18)
-        item.setText(_translate("AdminWindow", "19"))
-        item = self.tableWidget.verticalHeaderItem(19)
-        item.setText(_translate("AdminWindow", "20"))
-        item = self.tableWidget.verticalHeaderItem(20)
-        item.setText(_translate("AdminWindow", "21"))
-        item = self.tableWidget.verticalHeaderItem(21)
-        item.setText(_translate("AdminWindow", "22"))
-        item = self.tableWidget.verticalHeaderItem(22)
-        item.setText(_translate("AdminWindow", "23"))
-        item = self.tableWidget.verticalHeaderItem(23)
-        item.setText(_translate("AdminWindow", "25"))
-        item = self.tableWidget.verticalHeaderItem(24)
-        item.setText(_translate("AdminWindow", "26"))
-        item = self.tableWidget.verticalHeaderItem(25)
-        item.setText(_translate("AdminWindow", "27"))
-        item = self.tableWidget.verticalHeaderItem(26)
-        item.setText(_translate("AdminWindow", "28"))
-        item = self.tableWidget.verticalHeaderItem(27)
-        item.setText(_translate("AdminWindow", "29"))
-        item = self.tableWidget.verticalHeaderItem(28)
-        item.setText(_translate("AdminWindow", "30"))
-        item = self.tableWidget.verticalHeaderItem(29)
-        item.setText(_translate("AdminWindow", "31"))
-        item = self.tableWidget.verticalHeaderItem(30)
-        item.setText(_translate("AdminWindow", "32"))
-        item = self.tableWidget.verticalHeaderItem(31)
-        item.setText(_translate("AdminWindow", "33"))
-        item = self.tableWidget.verticalHeaderItem(32)
-        item.setText(_translate("AdminWindow", "35"))
+
+        for row in range(ADMIN_TABLE_ROWS):
+            item = self.tableWidget.verticalHeaderItem(row)
+            item.setText(_translate("AdminWindow", str(row + 1)))
+
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("AdminWindow", "Логин"))
         item = self.tableWidget.horizontalHeaderItem(1)
@@ -273,40 +109,65 @@ class Ui_AdminWindow(object):
         __sortingEnabled = self.tableWidget.isSortingEnabled()
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.setSortingEnabled(__sortingEnabled)
-        self.pushButton_3.setText(_translate("AdminWindow", "Сохранить изменения и выйти"))
+        self.pushButton_3.setText(_translate("AdminWindow",
+                                             "Сохранить изменения и выйти"))
 
-        row = 0
-        login_data = open(USER_DATA_FILE_PATH)
+        admin_login_file = open(ADMIN_DATA_FILE_PATH)
+        admin_data = list(csv.reader(admin_login_file))
+        admin_amount = len(admin_data) - 1
 
-        for line in login_data:
-            if len(line) > 2:
-                login, password, numbers = line.split()
+        for row in range(1, admin_amount + 1):
+            login = admin_data[row][0]
+            password = admin_data[row][1]
 
-                print(login, password, numbers)
+            item = self.tableWidget.item(row - 1, 0)
+            item.setText(_translate("AdminWindow", login))
+            item = self.tableWidget.item(row - 1, 1)
+            item.setText(_translate("AdminWindow", password))
 
-                item = self.tableWidget.item(row, 0)
-                item.setText(_translate("AdminWindow", str(login)))
-                item = self.tableWidget.item(row, 1)
-                item.setText(_translate("AdminWindow", str(password)))
-                item = self.tableWidget.item(row, 2)
-                item.setText(_translate("AdminWindow", str(numbers)))
+        admin_login_file.close()
 
-                row += 1
+        user_login_file = open(USER_DATA_FILE_PATH)
+        user_data = list(csv.reader(user_login_file))
+        user_amount = len(user_data) - 1
 
-        login_data.close()
+        for row in range(1, user_amount + 1):
+            login = user_data[row][0]
+            password = user_data[row][1]
+            available_stations = list(filter(lambda x: x != "",
+                                             user_data[row][2:]))
 
-    def saveQuit(self):
-        login_data = open(USER_DATA_FILE_PATH, "w")
-        login_data.close()
-        login_data = open(USER_DATA_FILE_PATH, "a+")
+            item = self.tableWidget.item(row + admin_amount - 1, 0)
+            item.setText(_translate("AdminWindow", login))
+            item = self.tableWidget.item(row + admin_amount - 1, 1)
+            item.setText(_translate("AdminWindow", password))
+            item = self.tableWidget.item(row + admin_amount - 1, 2)
+            item.setText(_translate("AdminWindow",
+                                    ", ".join(available_stations)))
 
-        for row in range(7):
+        user_login_file.close()
+
+    def save_login_data(self):
+        admin_login_file = open(ADMIN_DATA_FILE_PATH, "w", newline="")
+        admin_writer = csv.writer(admin_login_file)
+        admin_writer.writerow(["Login", "Password"])
+
+        user_login_file = open(USER_DATA_FILE_PATH, "w", newline="")
+        user_writer = csv.writer(user_login_file)
+        user_writer.writerow(["Login", "Password",
+                              *list(range(1, STATION_AMOUNT + 1))])
+
+        for row in range(ADMIN_TABLE_ROWS):
             login = self.tableWidget.item(row, 0).text()
             password = self.tableWidget.item(row, 1).text()
-            numbers = self.tableWidget.item(row, 2).text()
-            print(login, password, numbers)
+            station_list = self.tableWidget.item(row, 2).text().split(", ")
 
-            if len(login) > 2:
-                login_data.write(f"{login} {password} {numbers}\n")
+            if login != "":
+                if station_list[0] == "":
+                    admin_writer.writerow([login, password])
+                else:
+                    data_list = [login, password] + station_list
+                    user_writer.writerow(data_list)
 
-        login_data.close()
+        admin_login_file.close()
+        user_login_file.close()
