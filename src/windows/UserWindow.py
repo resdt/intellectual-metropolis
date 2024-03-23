@@ -9,12 +9,13 @@
 
 from PyQt5 import QtCore, QtWidgets
 import os
-import csv
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dat
 
 import src.main.PATH as path
+import src.main.constants as cst
+import src.main.utils as utl
 
 
 TMP_FOLD = path.TMP_FOLD
@@ -26,6 +27,8 @@ OUT_TABLE_PATH = path.OUT_TABLE_PATH
 PLOT_TABLE_PATH = path.PLOT_TABLE_PATH
 OUT_PICT1_PATH = path.OUT_PICT1_PATH
 OUT_PICT2_PATH = path.OUT_PICT2_PATH
+
+STATION_DATA_FILE_COLUMNS = cst.STATION_DATA_FILE_COLUMNS
 
 
 class Ui_UserWindow(object):
@@ -310,7 +313,7 @@ class Ui_UserWindow(object):
         _translate = QtCore.QCoreApplication.translate
         UserWindow.setWindowTitle(_translate("UserWindow", "Form2"))
         self.pushButton.setText(_translate("UserWindow", "Загрузить данные"))
-        self.label.setText(_translate("UserWindow", "Выбирете доступный вам комплекс:"))
+        self.label.setText(_translate("UserWindow", "Выберите доступный вам комплекс:"))
         self.pushButton_2.setText(_translate("UserWindow", "Выгрузить данные телеметрии"))
         self.label_2.setText(_translate("UserWindow", "При включенной системе"))
         self.label_3.setText(_translate("UserWindow", "При выключенной системе"))
@@ -363,8 +366,6 @@ class Ui_UserWindow(object):
         self.label_46.setText(_translate("UserWindow", "Позже график будет тут"))
 
     def show_available_stations(self):
-        print("GO!")
-
         self.listWidget_2.clear()
 
         current = self.listWidget.currentItem().text()
@@ -416,7 +417,7 @@ class Ui_UserWindow(object):
             self.lineEdit_29.setText(str((foff-fon) / foff * 100))
 
     def make_table(self):
-        data_table = []
+        available_stations_df = pd.DataFrame(columns=STATION_DATA_FILE_COLUMNS)
 
         date_start = dat.datetime.strptime(self.dateTimeEdit.text(),
                                            "%d.%m.%Y %H:%M:%S")
@@ -432,57 +433,29 @@ class Ui_UserWindow(object):
 
                 for line in station_content:
                     content_list = line.split(";")
-
+                    content_list += [None] * (len(STATION_DATA_FILE_COLUMNS) -
+                                              len(content_list))
                     date_start_file = dat.datetime.strptime(content_list[0],
                                                             "%d.%m.%Y %H:%M:%S")
                     date_end_file = dat.datetime.strptime(content_list[1],
                                                           "%d.%m.%Y %H:%M:%S")
 
-                    if date_start <= date_start_file and date_end >= date_end_file:
-                        data_table.append(content_list)
+                    if (date_start <= date_start_file and
+                        date_end >= date_end_file):
+                        station_df = pd.DataFrame([content_list],
+                                                  columns=STATION_DATA_FILE_COLUMNS)
+                        available_stations_df = pd.concat([available_stations_df,
+                                                           station_df])
+
+        utl.df_date_sort(available_stations_df,
+                         "Measurement start time",
+                         "%d.%m.%Y %H:%M:%S")
+
+        os.makedirs(TMP_FOLD, exist_ok=True)
+        available_stations_df.to_csv(PLOT_TABLE_PATH, index=False)
 
         os.makedirs(OUT_FOLD, exist_ok=True)
-        os.makedirs(TMP_FOLD, exist_ok=True)
-
-        data_table.sort(key=lambda x: dat.datetime.strptime(x[0],
-                                                       "%d.%m.%Y %H:%M:%S"))
-
-        with open(OUT_TABLE_PATH, "w", newline="") as table_output:
-            writer = csv.writer(table_output)
-            writer.writerows(data_table)
-
-        with open(PLOT_TABLE_PATH, "w", newline="") as tmp_table:
-            writer = csv.writer(tmp_table)
-            writer.writerow(["Measurement start time",
-                             "Measurement end time",
-                             "Reactive power phase A on",
-                             "Reactive power phase B on",
-                             "Reactive power phase C on",
-                             "Active power phase A on",
-                             "Active power phase B on",
-                             "Active power phase C on",
-                             "Voltage phase A on",
-                             "Voltage phase B on",
-                             "Voltage phase C on",
-                             "Cosine phase A on",
-                             "Cosine phase B on",
-                             "Cosine phase C on",
-                             "Reactive power phase A off",
-                             "Reactive power phase B off",
-                             "Reactive power phase C off",
-                             "Active power phase A off",
-                             "Active power phase B off",
-                             "Active power phase C off",
-                             "Voltage phase A off",
-                             "Voltage phase B off",
-                             "Voltage phase C off",
-                             "Cosine phase A off",
-                             "Cosine phase B off",
-                             "Cosine phase C off",
-                             "Number of powered blocks"])
-            writer.writerows(data_table)
-
-        print("Writing done")
+        available_stations_df.to_csv(OUT_TABLE_PATH, index=False)
 
     def make_plots(self):
         df = pd.read_csv(PLOT_TABLE_PATH)
