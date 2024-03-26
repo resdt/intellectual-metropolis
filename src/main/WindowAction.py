@@ -21,19 +21,17 @@ class MyWin(lp.QtWidgets.QMainWindow):
 
         self.ui = lp.Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.pushButton_5.clicked.connect(self.check_login)
+        self.ui.entry_button.clicked.connect(self.check_login)
 
     def check_login(self):
         admin_df = pd.read_csv(ADMIN_DATA_FILE_PATH, dtype=str)
         user_df = pd.read_csv(USER_DATA_FILE_PATH, dtype=str)
 
-        cur_login = self.ui.lineEdit.text()
-        cur_passwd = self.ui.lineEdit_2.text()
+        cur_login = self.ui.login_line.text()
+        cur_passwd = self.ui.passwd_line.text()
 
         if admin_df.loc[(admin_df["Login"] == cur_login) &
                         (admin_df["Password"] == cur_passwd)].any().any():
-            self.ui.lineEdit.setText(" ")
-            self.ui.lineEdit_2.setText(" ")
             self.open_admin_window()
         elif user_df.loc[(user_df["Login"] == cur_login) &
                          (user_df["Password"] == cur_passwd)].any().any():

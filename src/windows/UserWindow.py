@@ -313,7 +313,7 @@ class Ui_UserWindow(object):
         _translate = QtCore.QCoreApplication.translate
         UserWindow.setWindowTitle(_translate("UserWindow", "Form2"))
         self.pushButton.setText(_translate("UserWindow", "Загрузить данные"))
-        self.label.setText(_translate("UserWindow", "Выберите доступный вам комплекс:"))
+        self.label.setText(_translate("UserWindow", "Выберите доступный Вам комплекс:"))
         self.pushButton_2.setText(_translate("UserWindow", "Выгрузить данные телеметрии"))
         self.label_2.setText(_translate("UserWindow", "При включенной системе"))
         self.label_3.setText(_translate("UserWindow", "При выключенной системе"))
@@ -358,7 +358,7 @@ class Ui_UserWindow(object):
         self.label_38.setText(_translate("UserWindow", "Конец диапазона просмотра:"))
         self.label_39.setText(_translate("UserWindow", "Имя файла"))
         self.label_40.setText(_translate("UserWindow", "Номер записи"))
-        self.label_41.setText(_translate("UserWindow", "n=  (P_off-P_on)/P_off ∙100% "))
+        self.label_41.setText(_translate("UserWindow", "n = (P_off-P_on) / P_off ∙ 100% "))
         self.label_42.setText(_translate("UserWindow", "n"))
         self.label_43.setText(_translate("UserWindow", "P_on"))
         self.label_44.setText(_translate("UserWindow", "P_off"))
